@@ -95,9 +95,8 @@ body{
   font-weight:700;
 }
 
-/* ─── MEMO（プルダウン＋自由入力） ─── */
+/* ─── MEMO ─── */
 .memo-wrap{margin-bottom:28px;display:flex;flex-direction:column;gap:10px;}
-
 .memo-select{
   width:100%;
   background:var(--dark2);
@@ -118,7 +117,6 @@ body{
 }
 .memo-select:focus{outline:none;border-color:var(--green);}
 .memo-select option{background:#111E11;color:var(--white);}
-
 .memo-text{
   width:100%;
   background:var(--dark2);
@@ -187,11 +185,12 @@ body{
 .results.show{display:block;}
 .results-header{
   display:flex;align-items:center;gap:10px;
-  margin-bottom:20px;
+  margin-bottom:16px;
   padding-bottom:16px;
   border-bottom:1px solid var(--border);
+  flex-wrap:wrap;
 }
-.results-header h2{font-size:16px;font-weight:700;}
+.results-header h2{font-size:16px;font-weight:700;flex:1;}
 .badge-new{
   background:rgba(200,212,0,0.2);
   border:1px solid var(--yellow);
@@ -200,6 +199,27 @@ body{
   padding:3px 10px;border-radius:50px;
   letter-spacing:0.08em;
 }
+
+/* ─── 全部コピーボタン ─── */
+.copy-all-btn{
+  background:rgba(59,170,59,0.15);
+  border:1.5px solid var(--green);
+  color:var(--green2);
+  font-size:12px;font-weight:700;
+  padding:8px 20px;border-radius:50px;
+  cursor:pointer;
+  transition:all 0.15s;
+  letter-spacing:0.05em;
+  white-space:nowrap;
+}
+.copy-all-btn:hover{background:rgba(59,170,59,0.28);color:var(--white);}
+.copy-all-btn.copied{
+  background:rgba(200,212,0,0.15);
+  border-color:var(--yellow);
+  color:var(--yellow2);
+}
+
+/* ─── SNS CARDS ─── */
 .sns-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media(max-width:600px){.sns-grid{grid-template-columns:1fr;}}
 .sns-card{
@@ -215,7 +235,28 @@ body{
   display:flex;align-items:center;gap:10px;
   border-bottom:1px solid var(--border);
 }
-.sns-icon{font-size:20px;}
+.sns-icon{
+  width:28px;height:28px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:8px;
+  flex-shrink:0;
+}
+/* Instagram グラデ */
+.sns-icon-ig{
+  background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+}
+/* X ブラック */
+.sns-icon-x{
+  background:#000;
+}
+/* Facebook ブルー */
+.sns-icon-fb{
+  background:#1877F2;
+}
+/* Threads ブラック */
+.sns-icon-th{
+  background:#000;
+}
 .sns-name{font-size:13px;font-weight:700;}
 .sns-char{font-size:11px;color:var(--muted);margin-left:auto;}
 .sns-body{
@@ -294,9 +335,7 @@ body{
   <!-- STEP 3 補足メモ -->
   <div class="step-label">STEP 3｜ひとこと補足（任意）</div>
   <div class="memo-wrap">
-    <select class="memo-select" id="memoSelect" onchange="onSelectChange()">
-      <!-- テーマ選択で動的に入れ替わります -->
-    </select>
+    <select class="memo-select" id="memoSelect" onchange="onSelectChange()"></select>
     <textarea class="memo-text" id="memoText" placeholder="自由に追記できます（例：先週タカゾノさんと協業スタートしました）"></textarea>
     <div class="memo-hint">💡 プルダウンで例を選ぶと自動入力されます。そのまま編集してもOK。</div>
   </div>
@@ -315,57 +354,83 @@ body{
     <div class="results-header">
       <h2>📣 生成された投稿文</h2>
       <span class="badge-new">NEW</span>
+      <button class="copy-all-btn" id="copyAllBtn" onclick="copyAll(this)">📋 4つまとめてコピー</button>
     </div>
     <div class="sns-grid">
+
+      <!-- Instagram -->
       <div class="sns-card">
         <div class="sns-card-head">
-          <span class="sns-icon">📸</span>
+          <div class="sns-icon sns-icon-ig">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="white" stroke-width="2"/>
+              <circle cx="12" cy="12" r="4" fill="none" stroke="white" stroke-width="2"/>
+              <circle cx="17.5" cy="6.5" r="1.2" fill="white"/>
+            </svg>
+          </div>
           <span class="sns-name">Instagram</span>
           <span class="sns-char" id="char-ig"></span>
         </div>
         <div class="sns-body" id="body-ig"></div>
         <div class="sns-foot"><button class="copy-btn" onclick="copyText('body-ig',this)">コピー</button></div>
       </div>
+
+      <!-- X -->
       <div class="sns-card">
         <div class="sns-card-head">
-          <span class="sns-icon">𝕏</span>
+          <div class="sns-icon sns-icon-x">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="white">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </div>
           <span class="sns-name">X（Twitter）</span>
           <span class="sns-char" id="char-x"></span>
         </div>
         <div class="sns-body" id="body-x"></div>
         <div class="sns-foot"><button class="copy-btn" onclick="copyText('body-x',this)">コピー</button></div>
       </div>
+
+      <!-- Facebook -->
       <div class="sns-card">
         <div class="sns-card-head">
-          <span class="sns-icon">👥</span>
+          <div class="sns-icon sns-icon-fb">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+              <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.268h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+            </svg>
+          </div>
           <span class="sns-name">Facebook</span>
           <span class="sns-char" id="char-fb"></span>
         </div>
         <div class="sns-body" id="body-fb"></div>
         <div class="sns-foot"><button class="copy-btn" onclick="copyText('body-fb',this)">コピー</button></div>
       </div>
+
+      <!-- Threads -->
       <div class="sns-card">
         <div class="sns-card-head">
-          <span class="sns-icon">🧵</span>
+          <div class="sns-icon sns-icon-th">
+            <svg width="15" height="16" viewBox="0 0 192 192" fill="white">
+              <path d="M141.537 88.988a66.667 66.667 0 0 0-2.518-1.143c-1.482-27.307-16.403-42.94-41.457-43.1h-.34c-14.986 0-27.449 6.396-35.12 18.036l13.779 9.452c5.73-8.695 14.724-10.548 21.348-10.548h.229c8.249.053 14.474 2.452 18.503 7.129 2.932 3.405 4.893 8.111 5.864 14.05-7.314-1.243-15.224-1.626-23.68-1.14-23.82 1.371-39.134 15.264-38.105 34.568.522 9.792 5.4 18.216 13.735 23.719 7.047 4.652 16.124 6.927 25.557 6.412 12.458-.683 22.231-5.436 29.049-14.127 5.178-6.6 8.452-15.153 9.898-25.93 5.937 3.583 10.337 8.298 12.767 13.966 4.132 9.635 4.373 25.468-8.546 38.376-11.319 11.308-24.925 16.2-45.488 16.351-22.809-.169-40.06-7.484-51.275-21.742C35.236 139.966 29.808 120.682 29.605 96c.203-24.682 5.63-43.966 16.133-57.317C56.954 24.425 74.204 17.11 97.013 16.94c22.975.17 40.526 7.52 52.171 21.847 5.71 7.026 10.015 15.86 12.853 26.162l16.147-4.308c-3.44-12.68-8.853-23.606-16.219-32.668C147.036 9.607 125.202.195 97.07 0h-.113C68.882.195 47.292 9.643 32.788 28.054 19.882 44.485 13.224 67.315 13.001 95.932L13 96v.067c.224 28.617 6.882 51.447 19.788 67.879 14.504 18.411 36.094 27.859 64.199 28.054h.113c24.986-.173 42.596-6.713 57.048-21.154 18.963-18.945 18.392-42.692 12.157-57.223-4.515-10.52-13.167-19.048-25.768-24.635zM96.898 140.87c-10.437.587-21.263-4.098-21.82-14.135-.427-8.014 5.702-16.951 24.237-18.04 2.12-.122 4.204-.181 6.253-.181 6.146 0 11.916.6 17.21 1.768-1.96 24.487-15.755 30.012-25.88 30.588z"/>
+            </svg>
+          </div>
           <span class="sns-name">Threads</span>
           <span class="sns-char" id="char-th"></span>
         </div>
         <div class="sns-body" id="body-th"></div>
         <div class="sns-foot"><button class="copy-btn" onclick="copyText('body-th',this)">コピー</button></div>
       </div>
+
     </div>
   </div>
 
 </div>
 
 <script>
-// ▼ Cloudflare WorkerのURLをここに設定（Worker作成後に差し替えてください）
 const WORKER_URL = 'https://oz-sns.yymmatsu.workers.dev';
 
 let selectedTheme = 'patent';
 let selectedAngle = '課題提起';
 
-// ─── テーマ別プルダウン補足例 ───
 const memoExamples = {
   patent: [
     { label: '選んでください', value: '' },
@@ -389,26 +454,19 @@ const memoExamples = {
 
 function updateMemoSelect(theme) {
   const sel = document.getElementById('memoSelect');
-  const examples = memoExamples[theme] || [];
   sel.innerHTML = '';
-  examples.forEach(ex => {
+  (memoExamples[theme] || []).forEach(ex => {
     const opt = document.createElement('option');
     opt.value = ex.value;
     opt.textContent = ex.label;
     sel.appendChild(opt);
   });
-  // テキストエリアもリセット
   document.getElementById('memoText').value = '';
 }
 
 function onSelectChange() {
   const sel = document.getElementById('memoSelect');
-  const textarea = document.getElementById('memoText');
-  if (sel.value) {
-    textarea.value = sel.value;
-  } else {
-    textarea.value = '';
-  }
+  document.getElementById('memoText').value = sel.value;
 }
 
 function selectTheme(el) {
@@ -424,7 +482,6 @@ function selectAngle(el) {
   selectedAngle = el.dataset.angle;
 }
 
-// ─── テーマ詳細 ───
 const themeMap = {
   patent: {
     name: '特許取得済みプロダクト「パッと薬遠隔さん」',
@@ -553,7 +610,26 @@ function copyText(id, btn) {
   });
 }
 
-// ─── 初期化 ───
+function copyAll(btn) {
+  const ig = document.getElementById('body-ig').textContent;
+  const x  = document.getElementById('body-x').textContent;
+  const fb = document.getElementById('body-fb').textContent;
+  const th = document.getElementById('body-th').textContent;
+
+  const all =
+    '【Instagram】\n' + ig +
+    '\n\n【X（Twitter）】\n' + x +
+    '\n\n【Facebook】\n' + fb +
+    '\n\n【Threads】\n' + th;
+
+  navigator.clipboard.writeText(all).then(() => {
+    btn.textContent = '✅ コピーしました！';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 4つまとめてコピー'; btn.classList.remove('copied'); }, 2500);
+  });
+}
+
+// 初期化
 updateMemoSelect('patent');
 </script>
 </body>
